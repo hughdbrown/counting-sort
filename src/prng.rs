@@ -1,5 +1,8 @@
 use std::time::{SystemTime, UNIX_EPOCH};
 
+use crate::customer::{
+    Customer,
+};
 
 // ************
 // *** Prng ***
@@ -42,13 +45,34 @@ impl Prng {
         let result = min as f64 + range * self.next_f64();
         return result as i32;
     }
+
+    // Return a pseudorandom value in the range [min, max).
+    fn next_usize(&mut self, min: usize, max: usize) -> usize {
+        let range = (max - min) as f64;
+        let result = min as f64 + range * self.next_f64();
+        return result as usize;
+    }
+
 }
 
-pub fn make_random_vec(count: i32, min: i32, max: i32) -> Vec<i32> {
+pub fn make_random_vec(count: usize, min: usize, max: usize) -> Vec<usize> {
     let mut prng = Prng::new();
-    let mut result = Vec::new();
+    let mut result: Vec::<usize> = Vec::new();
     for _ in 0..count {
-        result.push(prng.next_i32(min, max));
+        let u = prng.next_usize(min, max);
+        result.push(u);
     }
     result
 }
+
+pub fn make_random_vec_customer(count: usize, min: usize, max: usize) -> Vec<Customer> {
+    let mut prng = Prng::new();
+    let mut result: Vec::<Customer> = Vec::new();
+    for i in 0..count {
+        let v = prng.next_usize(min, max);
+        let c: Customer = Customer::new(i, v);
+        result.push(c);
+    }
+    result
+}
+

@@ -1,9 +1,9 @@
 use std::io;
 use std::io::Write;
+use std::fmt::Display;
 
-
-// Prompt the user for an i32.
-pub fn get_i32(prompt: &str) -> i32 {
+// Prompt the user for an usize.
+pub fn get_i32(prompt: &str) -> usize {
     print!("{prompt}");
     io::stdout().flush().unwrap();
 
@@ -13,11 +13,13 @@ pub fn get_i32(prompt: &str) -> i32 {
         .expect("Error reading input");
 
     let trimmed = str_value.trim();
-    return trimmed.parse::<i32>()
+    return trimmed.parse::<usize>()
         .expect("Error parsing integer");
 }
 
-pub fn check_sorted(values: &[i32]) -> bool {
+pub fn check_sorted<T>(values: &[T]) -> bool
+    where T: PartialOrd
+{
     for i in 1..values.len() {
         if values[i - 1] > values[i] {
             return false;
@@ -26,10 +28,12 @@ pub fn check_sorted(values: &[i32]) -> bool {
     true
 }
 
-pub fn print_vec(vec: &Vec<i32>, num_items: i32) {
+pub fn print_vec<T>(vec: &Vec<T>, num_items: usize)
+    where T: Copy + Display
+{
     let mut max = vec.len();
-    if max > num_items as usize {
-        max = num_items as usize;
+    if max > num_items {
+        max = num_items;
     }
 
     let mut string = String::new();
