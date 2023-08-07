@@ -29,7 +29,8 @@ pub fn check_sorted<T>(values: &[T]) -> bool
 }
 
 pub fn print_vec<T>(vec: &Vec<T>, num_items: usize)
-    where T: Copy + Display
+    // where T: Copy + Display
+    where T: Display
 {
     let mut max = vec.len();
     if max > num_items {

@@ -1,12 +1,14 @@
 pub fn counting_sort<T>(values: &mut [T])
-    where T: Copy + Into<usize>
+    // where T: Copy + Into<usize>
+    where T: Into<usize> + Clone
 {
     let value_count = values.len();
     if value_count > 1 {
         // Find maximum key (a usize) in values
         let max: usize = 
             values.iter()
-            .map(|val| Into::<usize>::into(*val))
+            // .map(|val| Into::<usize>::into(*val))
+            .map(|val| Into::<usize>::into((*val).clone()))
             .max().unwrap() + 1;
 
         // Make count storage for maximum number of keys
@@ -14,7 +16,8 @@ pub fn counting_sort<T>(values: &mut [T])
 
         // Get count of occurrences of each key in values
         for val in values.iter() {
-            let key: usize = Into::<usize>::into(*val);
+            // let key: usize = Into::<usize>::into(*val);
+            let key: usize = Into::<usize>::into((*val).clone());
             counts[key] += 1;
         }
 
@@ -37,16 +40,18 @@ pub fn counting_sort<T>(values: &mut [T])
         //}
         let mut indexes = vec![0; value_count];
         for (i, val) in values.iter().enumerate().rev() {
-            let key: usize = Into::<usize>::into(*val);
+            // let key: usize = Into::<usize>::into(*val);
+            let key: usize = Into::<usize>::into((*val).clone());
             counts[key] -= 1;
             indexes[counts[key]] = i;
         }
         let mut tmp: Vec<T> = Vec::with_capacity(value_count);
         for i in indexes.iter() {
-            tmp.push(values[*i]);
+            // tmp.push(values[*i]);
+            tmp.push(values[*i].clone());
         }
         for (i, val) in tmp.iter().enumerate() {
-            values[i] = *val;
+            values[i] = (*val).clone();
         }
     }
 }

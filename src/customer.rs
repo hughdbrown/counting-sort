@@ -1,19 +1,20 @@
 use std::fmt;
 use std::cmp::Ordering;
 
-#[derive(Clone, Copy, Eq)]
+//#[derive(Clone, Copy, Eq)]
+#[derive(Clone, Eq)]
 pub struct Customer {
-    // id: String,
-    id: usize,
+    id: String,
+    // id: usize,
     num_purchases: usize,
 }
 
 impl Customer {
     // Another associated function, taking two arguments:
     pub fn new(customer_num: usize, num_purchases: usize) -> Customer {
-        // let id = format!("C{customer_num}");
-        // Customer { id, num_purchases }
-        Customer { id: customer_num, num_purchases }
+        let id = format!("C{customer_num}");
+        Customer { id, num_purchases }
+        // Customer { id: customer_num, num_purchases }
     }
 }
 
@@ -23,12 +24,14 @@ impl fmt::Display for Customer {
     }
 }
 
+// Into<usize> is needed for converting a Customer into a key for sorting
 impl Into<usize> for Customer {
     fn into(self: Self) -> usize {
         self.num_purchases
     }
 }
 
+// PartialOrd, Ord, and PartialEq are needed for src/util::check_sorted()
 impl PartialOrd for Customer {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         Some(self.cmp(other))
