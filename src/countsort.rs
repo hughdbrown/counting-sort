@@ -1,5 +1,5 @@
+// Way too many copies/clones of the original values
 pub fn counting_sort<T>(values: &mut [T])
-    // where T: Copy + Into<usize>
     where T: Into<usize> + Clone
 {
     let value_count = values.len();
@@ -7,17 +7,16 @@ pub fn counting_sort<T>(values: &mut [T])
         // Find maximum key (a usize) in values
         let max: usize = 
             values.iter()
-            // .map(|val| Into::<usize>::into(*val))
-            .map(|val| Into::<usize>::into((*val).clone()))
+            .map(|val: &T| Into::<usize>::into((*val).clone()))
             .max().unwrap() + 1;
 
         // Make count storage for maximum number of keys
         let mut counts: Vec<usize> = vec![0; max];
 
         // Get count of occurrences of each key in values
-        for val in values.iter() {
-            // let key: usize = Into::<usize>::into(*val);
-            let key: usize = Into::<usize>::into((*val).clone());
+        for val in values.into_iter() {
+            // Why does getting the key for the value require a clone?
+            let key: usize = Into::<usize>::into(val.clone());
             counts[key] += 1;
         }
 
@@ -26,32 +25,25 @@ pub fn counting_sort<T>(values: &mut [T])
             counts[i] += counts[i - 1];
         }
 
-        // Copy values into correct position in temporary storage
-        //let mut tmp: Vec<T> = Vec::with_capacity(value_count);
-        //for val in values.iter().rev() {
-        //    let key: usize = Into::<usize>::into(*val);
-        //    counts[key] -= 1;
-        //    tmp[counts[key]] = *val;
-        //}
-        //
-        // Copy sorted values in temporary storage into  
-        //for (i, val) in tmp.iter().enumerate() {
-        //    values[i] = *val;
-        //}
+        // Make a vector of indexes where each value belongs:
+        // the values in this vector are the positions that the
+        // values belong in the final vector.
         let mut indexes = vec![0; value_count];
         for (i, val) in values.iter().enumerate().rev() {
-            // let key: usize = Into::<usize>::into(*val);
             let key: usize = Into::<usize>::into((*val).clone());
             counts[key] -= 1;
             indexes[counts[key]] = i;
         }
+
+        // Place the values in order in a temporary vector
         let mut tmp: Vec<T> = Vec::with_capacity(value_count);
-        for i in indexes.iter() {
-            // tmp.push(values[*i]);
-            tmp.push(values[*i].clone());
+        for i in indexes.into_iter() {
+            tmp.push(values[i].clone());
         }
-        for (i, val) in tmp.iter().enumerate() {
-            values[i] = (*val).clone();
+
+        // Copy the temporary array into the mutable input array.
+        for (i, val) in tmp.into_iter().enumerate() {
+            values[i] = val;
         }
     }
 }
